@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Промо-сайт магазина DeWalt</title>
+  <style>
+      body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+          background-color: #f9f9f9;
+      }
+      header {
+          background: #FFD700; /* Цвет DeWalt */
+          color: black;
+          padding: 10px 20px;
+          text-align: center;
+      }
+      nav {
+          margin: 20px 0;
+      }
+      nav a {
+          margin: 0 15px;
+          text-decoration: none;
+          color: black;
+          font-weight: bold;
+      }
+      section {
+          padding: 20px;
+          display: none;
+      }
+      .active {
+          display: block;
+      }
+      footer {
+          text-align: center;
+          padding: 10px 0;
+          background: #f1f1f1;
+          position: relative;
+          bottom: 0;
+          width: 100%;
+      }
+      .product {
+          border: 1px solid #ccc;
+          padding: 10px;
+          margin: 10px 0;
+          border-radius: 5px;
+      }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Добро пожаловать в магазин DeWalt!</h1>
+  <nav>
+      <a href="#" onclick="showSection('home')">Главная</a>
+      <a href="#" onclick="showSection('products')">Продукты</a>
+      <a href="#" onclick="showSection('services')">Услуги</a>
+      <a href="#" onclick="showSection('about')">О нас</a>
+      <a href="#" onclick="showSection('contact')">Контакты</a>
+  </nav>
+</header>
+
+<section id="home" class="active">
+  <h2>Главная страница</h2>
+  <p>Это главная страница нашего магазина DeWalt. Здесь вы найдете лучшие инструменты для профессионалов.</p>
+</section>
+
+<section id="products">
+  <h2>Продукты</h2>
+  <div class="product">
+      <h3>Инструмент 1</h3>
+      <p>Описание инструмента 1.</p>
+  </div>
+  <div class="product">
+      <h3>Инструмент 2</h3>
+      <p>Описание инструмента 2.</p>
+  </div>
+  <div class="product">
+      <h3>Инструмент 3</h3>
+      <p>Описание инструмента 3.</p>
+  </div>
+</section>
+
+<section id="services">
+  <h2>Услуги</h2>
+  <p>Мы предлагаем консультации по выбору инструментов и техническую поддержку.</p>
+</section>
+
+<section id="about">
+  <h2>О нас</h2>
+  <p>Магазин DeWalt - это команда профессионалов, предлагая лучшие инструменты и решения.</p>
+</section>
+
+<section id="contact">
+  <h2>Контакты</h2>
+  <p>Свяжитесь с нами по адресу: email@example.com или по телефону: +7 (123) 456-78-90</p>
+</section>
+
+<footer>
+  <p>&copy; 2024 Промо-сайт магазина DeWalt</p>
+</footer>
+
+<script>
+  function showSection(sectionId) {
+      const section = document.getElementById(sectionId);
+      if (!section) {
+          console.error(`Section with id "${sectionId}" was not found.`);
+          return;
+      }
+      const sections = document.querySelectorAll('section');
+      sections.forEach(s => s.classList.remove('active'));
+      section.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
