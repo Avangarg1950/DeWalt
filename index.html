@@ -29,9 +29,11 @@
       section {
           padding: 20px;
           display: none;
+          transition: opacity 0.5s ease;
       }
       .active {
           display: block;
+          opacity: 1;
       }
       footer {
           text-align: center;
@@ -69,18 +71,21 @@
 
 <section id="products">
   <h2>Продукты</h2>
-  <div class="product">
-      <h3>Инструмент 1</h3>
-      <p>Описание инструмента 1.</p>
+  <div id="productList">
+      <div class="product">
+          <h3>Инструмент 1</h3>
+          <p>Описание инструмента 1.</p>
+      </div>
+      <div class="product">
+          <h3>Инструмент 2</h3>
+          <p>Описание инструмента 2.</p>
+      </div>
+      <div class="product">
+          <h3>Инструмент 3</h3>
+          <p>Описание инструмента 3.</p>
+      </div>
   </div>
-  <div class="product">
-      <h3>Инструмент 2</h3>
-      <p>Описание инструмента 2.</p>
-  </div>
-  <div class="product">
-      <h3>Инструмент 3</h3>
-      <p>Описание инструмента 3.</p>
-  </div>
+  <button onclick="addProduct()">Добавить продукт</button>
 </section>
 
 <section id="services">
@@ -104,14 +109,31 @@
 
 <script>
   function showSection(sectionId) {
-      const section = document.getElementById(sectionId);
-      if (!section) {
-          console.error(`Section with id "${sectionId}" was not found.`);
-          return;
-      }
       const sections = document.querySelectorAll('section');
-      sections.forEach(s => s.classList.remove('active'));
-      section.classList.add('active');
+      sections.forEach(s => {
+          s.classList.remove('active');
+          s.style.opacity = 0; // Скрытие секции с анимацией
+      });
+      const section = document.getElementById(sectionId);
+      if (section) {
+          section.classList.add('active');
+          setTimeout(() => {
+              section.style.opacity = 1; // Показ секции с анимацией
+          }, 10);
+      } else {
+          console.error(`Section with id "${sectionId}" was not found.`);
+      }
+  }
+
+  function addProduct() {
+      const productList = document.getElementById('productList');
+      const newProduct = document.createElement('div');
+      newProduct.className = 'product';
+      newProduct.innerHTML = `
+          <h3>Новый инструмент</h3>
+          <p>Описание нового инструмента.</p>
+      `;
+      productList.appendChild(newProduct);
   }
 </script>
 
