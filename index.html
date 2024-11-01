@@ -48,6 +48,13 @@
           padding: 10px;
           margin: 10px 0;
           border-radius: 5px;
+          position: relative;
+      }
+      .edit-btn, .delete-btn {
+          margin-left: 10px;
+          cursor: pointer;
+          color: blue;
+          text-decoration: underline;
       }
   </style>
 </head>
@@ -71,20 +78,7 @@
 
 <section id="products">
   <h2>Продукты</h2>
-  <div id="productList">
-      <div class="product">
-          <h3>Инструмент 1</h3>
-          <p>Описание инструмента 1.</p>
-      </div>
-      <div class="product">
-          <h3>Инструмент 2</h3>
-          <p>Описание инструмента 2.</p>
-      </div>
-      <div class="product">
-          <h3>Инструмент 3</h3>
-          <p>Описание инструмента 3.</p>
-      </div>
-  </div>
+  <div id="productList"></div>
   <button onclick="addProduct()">Добавить продукт</button>
 </section>
 
@@ -108,6 +102,16 @@
 </footer>
 
 <script>
+  const productList = document.getElementById('productList');
+
+  // Загрузка продуктов из локального хранилища
+  function loadProducts() {
+      const products = JSON.parse(localStorage.getItem('products')) || [];
+      products.forEach(product => {
+          addProductToDOM(product.name, product.description);
+      });
+  }
+
   function showSection(sectionId) {
       const sections = document.querySelectorAll('section');
       sections.forEach(s => {
@@ -126,15 +130,69 @@
   }
 
   function addProduct() {
-      const productList = document.getElementById('productList');
+      const productName = prompt("Введите название продукта:");
+      const productDescription = prompt("Введите описание продукта:");
+      if (productName && productDescription) {
+          const product = { name: productName, description: productDescription };
+          addProductToDOM(productName, productDescription);
+          saveProductToLocalStorage(product);
+      }
+  }
+
+  function addProductToDOM(name, description) {
       const newProduct = document.createElement('div');
       newProduct.className = 'product';
       newProduct.innerHTML = `
-          <h3>Новый инструмент</h3>
-          <p>Описание нового инструмента.</p>
+          <h3>${name}</h3>
+          <p>${description}</p>
+          <span class="edit-btn" onclick="editProduct(this)">Редактировать</span>
+          <span class="delete-btn" onclick="deleteProduct(this)">Удалить</span>
       `;
       productList.appendChild(newProduct);
   }
+
+  function saveProductToLocalStorage(product) {
+      const products = JSON.parse(localStorage.getItem('products')) || [];
+      products.push(product);
+      localStorage.setItem('products', JSON.stringify(products));
+  }
+
+  function editProduct(element) {
+      const productDiv = element.parentElement;
+      const productName = productDiv.querySelector('h3').innerText;
+      const productDescription = productDiv.querySelector('p').innerText;
+
+      const newName = prompt("Редактировать название продукта:", productName);
+      const newDescription = prompt("Редактировать описание продукта:", productDescription);
+      if (newName && newDescription) {
+          productDiv.querySelector('h3').innerText = newName;
+          productDiv.querySelector('p').innerText = newDescription;
+
+          // Обновление локального хранилища
+          updateLocalStorage();
+      }
+  }
+
+  function deleteProduct(element) {
+      const productDiv = element.parentElement;
+      productDiv.remove();
+
+      // Обновление локального хранилища
+      updateLocalStorage();
+  }
+
+  function updateLocalStorage() {
+      const products = [];
+      document.querySelectorAll('.product').forEach(productDiv => {
+          const name = productDiv.querySelector('h3').innerText;
+          const description = productDiv.querySelector('p').innerText;
+          products.push({ name, description });
+      });
+      localStorage.setItem('products', JSON.stringify(products));
+  }
+
+  // Загрузка продуктов при загрузке страницы
+  window.onload = loadProducts;
 </script>
 
 </body>
