@@ -25,6 +25,25 @@
           text-decoration: none;
           color: black;
           font-weight: bold;
+          position: relative;
+      }
+      nav a:hover {
+          color: #FFD700; /* Цвет при наведении */
+      }
+      nav a::after {
+          content: '';
+          display: block;
+          height: 2px;
+          width: 0;
+          background: #000;
+          transition: width 0.3s;
+          position: absolute;
+          bottom: -5px;
+          left: 50%;
+          transform: translateX(-50%);
+      }
+      nav a:hover::after {
+          width: 100%;
       }
       section {
           padding: 20px;
@@ -49,12 +68,22 @@
           margin: 10px 0;
           border-radius: 5px;
           position: relative;
+          transition: background-color 0.3s;
+      }
+      .product:hover {
+          background-color: #f0f0f0; /* Цвет фона продукта при наведении */
       }
       .edit-btn, .delete-btn {
           margin-left: 10px;
           cursor: pointer;
           color: blue;
           text-decoration: underline;
+      }
+      .edit-btn:hover {
+          color: darkblue; /* Цвет при наведении на кнопку редактирования */
+      }
+      .delete-btn:hover {
+          color: red; /* Цвет при наведении на кнопку удаления */
       }
   </style>
 </head>
