@@ -85,6 +85,26 @@
       .delete-btn:hover {
           color: red; /* Цвет при наведении на кнопку удаления */
       }
+
+      /* Сеточная разметка */
+      .grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: 20px;
+      }
+
+      /* Медиазапросы для адаптивности */
+      @media (max-width: 600px) {
+          nav {
+              flex-direction: column;
+          }
+          nav a {
+              margin: 5px 0;
+          }
+          header {
+              padding: 20px;
+          }
+      }
   </style>
 </head>
 <body>
@@ -107,7 +127,7 @@
 
 <section id="products">
   <h2>Продукты</h2>
-  <div id="productList"></div>
+  <div id="productList" class="grid"></div>
   <button onclick="addProduct()">Добавить продукт</button>
 </section>
 
