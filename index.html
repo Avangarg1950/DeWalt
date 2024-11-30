@@ -10,45 +10,33 @@
           margin: 0;
           padding: 0;
           background-color: #f9f9f9;
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh;
       }
       header {
-          background: #FFD700; /* Цвет DeWalt */
+          background: #FFD700;
           color: black;
-          padding: 10px 20px;
+          padding: 1rem;
           text-align: center;
       }
       nav {
-          margin: 20px 0;
+          display: flex;
+          justify-content: center;
+          gap: 1rem;
       }
       nav a {
-          margin: 0 15px;
           text-decoration: none;
           color: black;
           font-weight: bold;
-          position: relative;
-      }
-      nav a:hover {
-          color: #000000; /* Цвет при наведении */
-      }
-      nav a::after {
-          content: '';
-          display: block;
-          height: 2px;
-          width: 0;
-          background: #000;
-          transition: width 0.3s;
-          position: absolute;
-          bottom: -5px;
-          left: 50%;
-          transform: translateX(-50%);
-      }
-      nav a:hover::after {
-          width: 100%;
+          font-size: 1rem;
       }
       section {
-          padding: 20px;
+          padding: 2rem;
           display: none;
           transition: opacity 0.5s ease;
+          max-width: 1200px;
+          margin: 0 auto;
       }
       .active {
           display: block;
@@ -56,54 +44,50 @@
       }
       footer {
           text-align: center;
-          padding: 10px 0;
+          padding: 1rem;
           background: #f1f1f1;
-          position: relative;
-          bottom: 0;
-          width: 100%;
+          margin-top: auto;
+          font-size: 0.9rem;
       }
       .product {
           border: 1px solid #ccc;
-          padding: 10px;
-          margin: 10px 0;
+          padding: 1rem;
+          margin: 1rem 0;
           border-radius: 5px;
           position: relative;
           transition: background-color 0.3s;
       }
       .product:hover {
-          background-color: #f0f0f0; /* Цвет фона продукта при наведении */
+          background-color: #f0f0f0;
       }
-      .edit-btn, .delete-btn {
+      .delete-btn {
           margin-left: 10px;
           cursor: pointer;
-          color: blue;
+          color: red;
+          font-size: 0.9rem;
+          border: none;
+          background: none;
           text-decoration: underline;
       }
-      .edit-btn:hover {
-          color: darkblue; /* Цвет при наведении на кнопку редактирования */
-      }
       .delete-btn:hover {
-          color: red; /* Цвет при наведении на кнопку удаления */
+          color: darkred;
       }
-
-      /* Сеточная разметка */
       .grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-          gap: 20px;
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+          gap: 1.5rem;
       }
-
-      /* Медиазапросы для адаптивности */
-      @media (max-width: 600px) {
-          nav {
-              flex-direction: column;
-          }
-          nav a {
-              margin: 5px 0;
-          }
-          header {
-              padding: 20px;
-          }
+      button {
+          padding: 0.8rem 1.2rem;
+          font-size: 1rem;
+          background-color: #FFD700;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background-color 0.3s;
+      }
+      button:hover {
+          background-color: #FFA500;
       }
   </style>
 </head>
@@ -129,6 +113,7 @@
   <h2>Продукты</h2>
   <div id="productList" class="grid"></div>
   <button onclick="addProduct()">Добавить продукт</button>
+  <button onclick="toggleAdminMode()">Включить режим администратора</button>
 </section>
 
 <section id="services">
@@ -138,7 +123,7 @@
 
 <section id="about">
   <h2>О нас</h2>
-  <p>Магазин DeWalt - это команда профессионалов, предлагая лучшие инструменты и решения.</p>
+  <p>Магазин DeWalt - это команда профессионалов, предлагающая лучшие инструменты и решения.</p>
 </section>
 
 <section id="contact">
@@ -151,99 +136,72 @@
 </footer>
 
 <script>
+  let isAdmin = false;
+
   const productList = document.getElementById('productList');
 
-  // Загрузка продуктов из локального хранилища
   function loadProducts() {
       const products = JSON.parse(localStorage.getItem('products')) || [];
       products.forEach(product => {
-          addProductToDOM(product.name, product.description);
+          addProductToDOM(product.name, product.description, product.id);
       });
   }
 
   function showSection(sectionId) {
-      const sections = document.querySelectorAll('section');
-      sections.forEach(s => {
-          s.classList.remove('active');
-          s.style.opacity = 0; // Скрытие секции с анимацией
-      });
-      const section = document.getElementById(sectionId);
-      if (section) {
-          section.classList.add('active');
-          setTimeout(() => {
-              section.style.opacity = 1; // Показ секции с анимацией
-          }, 10);
-      } else {
-          console.error(`Section with id "${sectionId}" was not found.`);
-      }
+      document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+      document.getElementById(sectionId)?.classList.add('active');
   }
 
   function addProduct() {
-      const productName = prompt("Введите название продукта:");
-      const productDescription = prompt("Введите описание продукта:");
-      if (productName && productDescription) {
-          const product = { name: productName, description: productDescription };
-          addProductToDOM(productName, productDescription);
-          saveProductToLocalStorage(product);
+      const name = prompt("Введите название продукта:");
+      const description = prompt("Введите описание продукта:");
+      if (name && description) {
+          const id = Date.now();
+          addProductToDOM(name, description, id);
+          saveToLocalStorage({ name, description, id });
       }
   }
 
-  function addProductToDOM(name, description) {
-      const newProduct = document.createElement('div');
-      newProduct.className = 'product';
-      newProduct.innerHTML = `
+  function addProductToDOM(name, description, id) {
+      const productDiv = document.createElement('div');
+      productDiv.className = 'product';
+      productDiv.setAttribute('data-id', id);
+      productDiv.innerHTML = `
           <h3>${name}</h3>
           <p>${description}</p>
-          <span class="edit-btn" onclick="editProduct(this)">Редактировать</span>
-          <span class="delete-btn" onclick="deleteProduct(this)">Удалить</span>
+          ${isAdmin ? `<button class="delete-btn" onclick="deleteProduct(${id})">Удалить</button>` : ''}
       `;
-      productList.appendChild(newProduct);
+      productList.appendChild(productDiv);
   }
 
-  function saveProductToLocalStorage(product) {
+  function saveToLocalStorage(product) {
       const products = JSON.parse(localStorage.getItem('products')) || [];
       products.push(product);
       localStorage.setItem('products', JSON.stringify(products));
   }
 
-  function editProduct(element) {
-      const productDiv = element.parentElement;
-      const productName = productDiv.querySelector('h3').innerText;
-      const productDescription = productDiv.querySelector('p').innerText;
+  function deleteProduct(id) {
+      const products = JSON.parse(localStorage.getItem('products')) || [];
+      const updatedProducts = products.filter(product => product.id !== id);
+      localStorage.setItem('products', JSON.stringify(updatedProducts));
 
-      const newName = prompt("Редактировать название продукта:", productName);
-      const newDescription = prompt("Редактировать описание продукта:", productDescription);
-      if (newName && newDescription) {
-          productDiv.querySelector('h3').innerText = newName;
-          productDiv.querySelector('p').innerText = newDescription;
-
-          // Обновление локального хранилища
-          updateLocalStorage();
-      }
+      const productDiv = document.querySelector(`.product[data-id="${id}"]`);
+      productDiv?.remove();
   }
 
-  function deleteProduct(element) {
-      const productDiv = element.parentElement;
-      productDiv.remove();
-
-      // Обновление локального хранилища
-      updateLocalStorage();
+  function toggleAdminMode() {
+      isAdmin = !isAdmin;
+      alert(isAdmin ? "Режим администратора включен" : "Режим администратора отключен");
+      refreshProductList();
   }
 
-  function updateLocalStorage() {
-      const products = [];
-      document.querySelectorAll('.product').forEach(productDiv => {
-          const name = productDiv.querySelector('h3').innerText;
-          const description = productDiv.querySelector('p').innerText;
-          products.push({ name, description });
-      });
-      localStorage.setItem('products', JSON.stringify(products));
+  function refreshProductList() {
+      productList.innerHTML = '';
+      loadProducts();
   }
 
-  // Загрузка продуктов при загрузке страницы
   window.onload = loadProducts;
 </script>
 
 </body>
 </html>
-
